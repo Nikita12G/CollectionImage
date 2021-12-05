@@ -15,7 +15,6 @@ enum NetworkError: Error{
 class NetworkService {
     
     static let shared = NetworkService()
-    
     private init () {}
     
     func request() async throws -> [ImageData] {
@@ -31,24 +30,5 @@ class NetworkService {
         
         return image
     }
-    //        URLSession.shared.dataTask(with: url) { data, response, error in
-    //            guard let data = data else {
-    //                print(error?.localizedDescription ?? "error data")
-    //                return
-    //            }
-    //
-    //            if error == nil {
-    //                do {
-    //                    do {
-    //                        let decoder = JSONDecoder()
-    //                        let hero = try decoder.decode([ImageData].self, from: data)
-    //                        completion(hero)
-    //                    } catch {
-    //                        print(String(describing: error))
-    //                    }
-    //                }
-    //            }
-    //        }.resume()
-    //    }
 }
 
