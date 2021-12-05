@@ -16,11 +16,18 @@ class ImageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionView.dataSource = self
-        NetworkService().request {data in
-            self.images = data
-            print(data)
-            DispatchQueue.main.async {
-                self.collectionView.reloadData()
+        showImage()
+    }
+    
+//    MARK: - Private func
+    
+    private func showImage() {
+        Task {
+            do {
+                images = try await NetworkService.shared.request()
+                collectionView.reloadData()
+            } catch {
+                print(error)
             }
         }
     }
