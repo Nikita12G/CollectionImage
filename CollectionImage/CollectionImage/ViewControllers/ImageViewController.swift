@@ -13,7 +13,7 @@ class ImageViewController: UIViewController {
     private var images = [ImageData]()
     private let standardLink = "https://api.opendota.com"
     
-    var refreshControl: UIRefreshControl{
+    private var refreshControl: UIRefreshControl{
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(refresh(sender:)), for: .valueChanged)
         return refreshControl
@@ -25,13 +25,13 @@ class ImageViewController: UIViewController {
         super.viewDidLoad()
         collectionView.dataSource = self
         collectionView.delegate = self
+        
         collectionView.refreshControl = refreshControl
         navigationItem()
         networkService()
-        }
+    }
     
-    
-//    MARK: - Private func
+    //    MARK: - Private func
     
     private func networkService() {
         Task {
@@ -46,7 +46,6 @@ class ImageViewController: UIViewController {
     
     private func navigationItem() {
         navigationItem.title = "Dota 2 heroes"
-        navigationItem.rightBarButtonItem = editButtonItem
         self.navigationController?.navigationBar.prefersLargeTitles = true
     }
     
@@ -64,7 +63,7 @@ extension ImageViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         images.count
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! ImageCollectionViewCell
@@ -72,8 +71,19 @@ extension ImageViewController: UICollectionViewDataSource {
         let completeLink = standardLink + images[indexPath.row].img
         cell.imageView.fetchImage(from: completeLink)
         cell.backgroundColor = .darkGray
-        cell.delegate = self
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        UIView.animate(
+            withDuration: 3,
+            delay: 0,
+            options: [.transitionFlipFromRight]) {
+                collectionView.cellForItem(at: indexPath)?.frame.origin.x -= 200
+            }
+        self.images.remove(at: indexPath.item)
+        self.collectionView.deleteItems(at: [indexPath ])
     }
     
 }
@@ -88,14 +98,4 @@ extension ImageViewController: UICollectionViewDelegateFlowLayout {
         return CGSize(width: width, height: height)
     }
 }
-//    MARK: - UICollectionView Delegate
 
-extension ImageViewController: ImageCollectionViewCellDelegate {
-    func delete(cell: ImageCollectionViewCell) {
-        if let indexPath = collectionView.indexPath(for: cell) {
-            images.remove(at: indexPath.item)
-            collectionView.deleteItems(at: [indexPath ])
-        }
-    }
-    
-}
